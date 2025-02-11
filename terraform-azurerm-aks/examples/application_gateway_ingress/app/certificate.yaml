@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: hyukjin-store-tls
+  namespace: default
+spec:
+  secretName: hyukjin-store-tls-2shmf  # 발급된 인증서를 저장할 Secret 이름
+  issuerRef:
+    name: lets-encrypt-prod  # 사용하는 ClusterIssuer 이름
+    kind: ClusterIssuer
+  dnsNames:
+  - hyukjin.store  # 발급할 도메인 이름

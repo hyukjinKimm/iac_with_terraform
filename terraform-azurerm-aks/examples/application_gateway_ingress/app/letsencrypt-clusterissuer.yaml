@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: lets-encrypt-prod
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: khjmimi@gmail.com  # Let's Encrypt에 등록할 이메일 주소
+    privateKeySecretRef:
+      name: lets-encrypt-prod-account-key
+    solvers:
+    - http01:
+        ingress:
+          class: nginx

@@ -1,0 +1,255 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: login
+spec:
+  replicas: 3  # 배포할 파드의 수
+  selector:
+    matchLabels:
+      app: login  # 레이블을 통해 파드 선택
+  template:
+    metadata:
+      labels:
+        app: login  # 이 레이블을 기반으로 파드를 선택
+    spec:
+      containers:
+      - name: login
+        image: docker.io/khjmimi952/login:v1  # 사용할 이미지
+        ports:
+        - containerPort: 3000  # 파드 내 컨테이너 포트
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: login-service
+spec:
+  selector:
+    app: login  # Deployment에서 정의한 레이블과 일치
+  ports:
+    - protocol: TCP
+      port: 3000  # 외부에서 접근할 포트
+      targetPort: 3000  # 내부 컨테이너에서 실제 사용하는 포트
+  type: NodePort 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: signup
+spec:
+  replicas: 3  # 배포할 파드의 수
+  selector:
+    matchLabels:
+      app: signup  # 레이블을 통해 파드 선택
+  template:
+    metadata:
+      labels:
+        app: signup  # 이 레이블을 기반으로 파드를 선택
+    spec:
+      containers:
+      - name: signup
+        image: docker.io/khjmimi952/signup:v1  # 사용할 이미지
+        ports:
+        - containerPort: 3000  # 파드 내 컨테이너 포트
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: signup-service
+spec:
+  selector:
+    app: signup  # Deployment에서 정의한 레이블과 일치
+  ports:
+    - protocol: TCP
+      port: 3000  # 외부에서 접근할 포트
+      targetPort: 3000  # 내부 컨테이너에서 실제 사용하는 포트
+  type: NodePort 
+---
+---
+apiVersion: apps/v1 # 메세지 큐 소비 서비스
+kind: Deployment
+metadata:
+  name: consumer
+spec:
+  replicas: 3  # 배포할 파드의 수
+  selector:
+    matchLabels:
+      app: consumer  # 레이블을 통해 파드 선택
+  template:
+    metadata:
+      labels:
+        app: consumer  # 이 레이블을 기반으로 파드를 선택
+    spec:
+      containers:
+      - name: consumer
+        image: docker.io/khjmimi952/consumer:v1  # 사용할 이미지
+        
+---
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reserve
+spec:
+  replicas: 3  # 배포할 파드의 수
+  selector:
+    matchLabels:
+      app: reserve  # 레이블을 통해 파드 선택
+  template:
+    metadata:
+      labels:
+        app: reserve  # 이 레이블을 기반으로 파드를 선택
+    spec:
+      containers:
+      - name: reserve
+        image: docker.io/khjmimi952/reserve:v1  # 사용할 이미지
+        ports:
+        - containerPort: 3000  # 파드 내 컨테이너 포트
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reserve-service
+spec:
+  selector:
+    app: reserve  # Deployment에서 정의한 레이블과 일치
+  ports:
+    - protocol: TCP
+      port: 3000  # 외부에서 접근할 포트
+      targetPort: 3000  # 내부 컨테이너에서 실제 사용하는 포트
+  type: NodePort 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: getreserve
+spec:
+  replicas: 3  # 배포할 파드의 수
+  selector:
+    matchLabels:
+      app: getreserve  # 레이블을 통해 파드 선택
+  template:
+    metadata:
+      labels:
+        app: getreserve  # 이 레이블을 기반으로 파드를 선택
+    spec:
+      containers:
+      - name: getreserve
+        image: docker.io/khjmimi952/getreserve:v1  # 사용할 이미지
+        ports:
+        - containerPort: 3000  # 파드 내 컨테이너 포트
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: getreserve-service
+spec:
+  selector:
+    app: getreserve  # Deployment에서 정의한 레이블과 일치
+  ports:
+    - protocol: TCP
+      port: 3000  # 외부에서 접근할 포트
+      targetPort: 3000  # 내부 컨테이너에서 실제 사용하는 포트
+  type: NodePort 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  replicas: 3  # 배포할 파드의 수
+  selector:
+    matchLabels:
+      app: nginx  # 레이블을 통해 파드 선택
+  template:
+    metadata:
+      labels:
+        app: nginx  # 이 레이블을 기반으로 파드를 선택
+    spec:
+      containers:
+      - name: nginx
+        image: docker.io/khjmimi952/nginx:v2  # 사용할 이미지
+        ports:
+        - containerPort: 80  # 파드 내 컨테이너 포트
+        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app: nginx  # Deployment에서 정의한 레이블과 일치
+  ports:
+    - protocol: TCP
+      port: 80  # 외부에서 접근할 포트
+      targetPort: 80  # 내부 컨테이너에서 실제 사용하는 포트
+  type: NodePort 
+---
+
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: web-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /  # 경로를 재작성
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"  # HTTPS 리디렉션 활성화
+    nginx.ingress.kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"  # SSL 패스스루 활성화 (옵션)
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"  # ClusterIssuer 설정
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: hyukjin.store
+    http:
+      paths:
+      - path: /login
+        pathType: Prefix
+        backend:
+          service:
+            name: login-service
+            port:
+              number: 3000
+      - path: /signup
+        pathType: Prefix
+        backend:
+          service:
+            name: signup-service
+            port:
+              number: 3000
+      - path: /reserve
+        pathType: Prefix
+        backend:
+          service:
+            name: reserve-service
+            port:
+              number: 3000
+      - path: /getreserve
+        pathType: Prefix
+        backend:
+          service:
+            name: getreserve-service
+            port:
+              number: 3000
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx-service
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - hyukjin.store  # 도메인 이름
+    secretName: hyukjin-store-tls-2shmf  # 발급된 인증서 Secret을 참조
+
+
+
+
+
+
+
+
