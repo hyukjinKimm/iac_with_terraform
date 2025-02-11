@@ -1,0 +1,17 @@
+# Terraform 실행 파일들
+*.tfstate
+*.tfstate.*
+
+# Terraform 계획 파일들
+*.tfplan
+
+# 로컬 환경 설정 파일
+.terraform/
+
+# IDE와 에디터 관련 파일들
+*.swp
+.idea/
+.vscode/
+
+# 기타
+crash.log
